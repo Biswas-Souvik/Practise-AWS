@@ -1,18 +1,29 @@
-import dotenv from 'dotenv';
+interface Event {
+  readonly rawPath: string
+}
 
-dotenv.config();
+interface OriginalImage {
+  url: string
+}
 
-const event = {
-  rawPath: '/gif-gen/hi-everyone',
-};
+interface GifImage {
+  original: OriginalImage
+}
+
+interface GifObject {
+  images: GifImage
+}
+
+interface GiphyResponse {
+  data: GifObject[]
+}
 
 const GIF_API_KEY = process.env.GIF_API_KEY;
 const GIF_API_BASE_URL = process.env.GIF_API_BASE_URL;
 
-export const handler = async (event) => {
+export const handler = async (event: Event) => {
   // TODO implement
   try {
-    console.log('running');
     const [_, path, prompt] = event.rawPath.split('/');
     if (path !== 'gif-gen')
       return {
@@ -24,9 +35,9 @@ export const handler = async (event) => {
     const url = `${GIF_API_BASE_URL}?api_key=${GIF_API_KEY}&q=${prompt}&limit=1`;
 
     const resp = await fetch(url);
-    const { data } = await resp.json();
+    const resp_json: GiphyResponse = await resp.json();
 
-    const gif_url = data?.[0]?.images?.original?.url;
+    const gif_url = resp_json?.data?.[0]?.images?.original?.url;
 
     if (!gif_url)
       return {
@@ -45,10 +56,8 @@ export const handler = async (event) => {
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Internal server error' }),
+      body: JSON.stringify({ error: 'Internal server error', message: err }),
     };
   }
 };
 
-const resp = await handler(event);
-console.log(resp);
