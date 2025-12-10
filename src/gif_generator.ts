@@ -18,19 +18,33 @@ interface GiphyResponse {
   data: GifObject[]
 }
 
+type ResponseBody = { url: string; error?: never } | { error: string; url?: never };
+
+interface GifAPIResponse {
+  statusCode : number;
+  headers: {
+    'Content-Type': 'application/json'
+  };
+  body: string
+}
+
 const GIF_API_KEY = process.env.GIF_API_KEY;
 const GIF_API_BASE_URL = process.env.GIF_API_BASE_URL;
 
-export const handler = async (event: Event) => {
+const createResponse = (respBody: ResponseBody, statusCode: number = 200): GifAPIResponse => {
+  return {
+    statusCode,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(respBody),
+  };
+}
+
+export const handler = async (event: Event): Promise<GifAPIResponse> => {
   // TODO implement
   try {
     const [_, path, prompt] = event.rawPath.split('/');
     if (path !== 'gif-gen')
-      return {
-        statusCode: 400,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'Invalid path' }),
-      };
+      return createResponse({ error: 'Invalid path' }, 400)
 
     const url = `${GIF_API_BASE_URL}?api_key=${GIF_API_KEY}&q=${prompt}&limit=1`;
 
@@ -40,24 +54,12 @@ export const handler = async (event: Event) => {
     const gif_url = resp_json?.data?.[0]?.images?.original?.url;
 
     if (!gif_url)
-      return {
-        statusCode: 404,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error: 'No GIF found' }),
-      };
+      return createResponse({ error: 'No GIF found' }, 404)
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: gif_url }),
-    };
+    return createResponse({ url: gif_url })
   } catch (err) {
     console.error(err);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'Internal server error', message: err }),
-    };
+    return createResponse({ error: 'Internal server error: ' + err}, 500)
   }
 };
 

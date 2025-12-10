@@ -21,7 +21,11 @@ interface WeatherResponse {
   }
 }
 
-export const handler = async (event) => {
+interface Event {
+  city: string
+}
+
+export const handler = async (event: Event) => {
   // TODO implement
   try {
     const { city } = event;

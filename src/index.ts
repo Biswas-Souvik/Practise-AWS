@@ -1,4 +1,4 @@
-import handler from './src/gif_generator.ts';
+import { handler } from './gif_generator.js';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -7,3 +7,4 @@ const event = {
 };
 
 const gif = await handler(event);
+console.log(gif)
