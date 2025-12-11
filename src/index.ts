@@ -1,6 +1,5 @@
-import { handler } from './gif_generator.js';
-import dotenv from 'dotenv';
-dotenv.config();
+import 'dotenv/config';
+import { handler } from './gif_generator.ts';
 
 const event = {
   rawPath: '/gif-gen/hi-everyone',
