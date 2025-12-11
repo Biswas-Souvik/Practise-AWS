@@ -43,7 +43,8 @@ export const handler = async (event: Event): Promise<GifAPIResponse> => {
   // TODO implement
   try {
     if (!GIF_API_KEY || !GIF_API_BASE_URL) return createResponse({ error: 'Missing Environment Variables' }, 400)
-
+    
+    if (!event.rawPath) return createResponse({ error: 'Missing Path' }, 400)
     const paths = event.rawPath.split('/').filter(Boolean);
 
     if (paths.length > 2) return createResponse({ error: 'Invalid path: too many segments' }, 400)
