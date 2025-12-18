@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>City Weather Search</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 40px;
+      }
+      input {
+        padding: 8px;
+        width: 200px;
+      }
+      button {
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .result {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Search Weather by City</h2>
+
+    <input type="text" id="cityInput" placeholder="Enter city name" />
+    <button onclick="searchCity()">Search</button>
+
+    <div class="result" id="result"></div>
+
+    <script>
+      const API_KEY = 'YOUR_API_KEY_HERE'; // replace with your API key
+
+      async function searchCity() {
+        const city = document.getElementById('cityInput').value;
+        const resultDiv = document.getElementById('result');
+
+        if (!city) {
+          resultDiv.innerHTML = 'Please enter a city name';
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `https://zb9dvl0lha.execute-api.ap-south-1.amazonaws.com/test/weather?city=${city}`
+          );
+
+          if (!response.ok) {
+            throw new Error('City not found');
+          }
+          console.log('resp: ', response);
+          const data = await response.json();
+
+          resultDiv.innerHTML = data;
+        } catch (error) {
+          console.log('err: ', error);
+          resultDiv.innerHTML = error;
+        }
+      }
+    </script>
+  </body>
+</html>

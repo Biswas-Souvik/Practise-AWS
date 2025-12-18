@@ -1,9 +1,65 @@
 import 'dotenv/config';
 import { handler } from './gif_generator.ts';
+import {
+  getPresignedUrl,
+  getPresignedUrlPut,
+  getS3Object,
+} from './s3_operations.ts';
 
-const event = {
-  rawPath: '/gif-gen/hi-everyone',
-};
+const output = await getPresignedUrlPut(
+  'practise-s3bucket-souvik',
+  'Personal/sample.txt'
+);
+// console.log(output);
 
-const gif = await handler(event);
-console.log(gif)
+// const output = await getS3Object(
+//   'practise-s3bucket-souvik',
+//   'Personal/JSTS.txt'
+// );
+// // console.log(output);
+
+/* https://practise-s3bucket-souvik.s3.ap-south-1.amazonaws.com/Personal/Souvik-Biswas-Resume-29102025.pdf
+X-Amz-Algorithm=AWS4-HMAC-SHA256
+X-Amz-Content-Sha256=UNSIGNED-PAYLOAD
+X-Amz-Credential=ASIA343VWCI4XEZL6VET/20251214/ap-south-1/s3/aws4_request
+X-Amz-Date=20251214T095039Z
+X-Amz-Expires=3600
+X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGYaCXVzLWVhc3QtMSJHMEUCIQDzyWGsHUZ7hyGLRYYTo2AVg9DpvglxPW/PERcvt4T5WgIgEK3LJ40mYlRuzc20Wo6TUqkldmL/Cw5xQld41tNYnZIqkwMILxAAGgw4MTc5MDEyMTIyMTciDHmHcg6l+58LgrQqrSrwAmAhICPxeWvNkcV3yyCJNFOh3mlswv34vMhY8Y2+xEiAq2VQ/muRkEtIQ3xYEmCjjbg12f2SyjCmO3j8yCr45ZyhdQj/UEq8tC7O1g+jiRODTScanYNv9ycy8RFLAAV2ynPTwU6/AVK3NvQWRjgcr+/Z6sIDhJFo/mG+R7BNRgs0OPF3W/vO2Tgxa7UiBelQnwz6ZLcYhhUzHxxIE76wOY8T3XE8EKuEX+ykN3AJDadrqO75SBgw2GJX8thVBUTIkcNUN5GzPGJhrQPqQ6d6jmWwKgMqBE5DdGp0Ss8WXuJJZKJe0DnQnlADyqKPruY1n7CmBkPQYMPXui7Qe8A6EsljWFjGnwDABE4DS3WHfqsOuthhyn7amhyB8/RVdKnUrUkzXN+HzfmYIEGQj/SHe03/Q8U/ZInFMWmMBifPIrhmnnpQOe1RP/Xdyfz3YrGimcf7iJAnNzeUnO+Q62K7Dg9ll5y7GYZIh2wRIZvd05wpMLyg+ckGOqQBJPuTIz6sYvLwAc0pyhc3tQyUuFv5BVbebqURr29VbBUdBvm8Db7gGxEG5dNY4EXGRGY9fAipfgNz1YkS84sb0Uxp0qBHO9BfGLfFU8lwq0+aKihLCPaQbg5UeDQioMkLpkw8iMoE5a40fdT09JbcKNQryglgsF8ioOHVci4WjBukyGJfl1Yd7ZFAydJOlKCwg6xzgMFZlXErKskHx/EkQLnI3TI=
+X-Amz-Signature=229eef7514735d37e902565cb51705532b7a6c58bcdf2fb1b614ffd109422b19
+X-Amz-SignedHeaders=host
+x-amz-checksum-mode=ENABLED
+x-id=GetObject*/
+
+/* https://practise-s3bucket-souvik.s3.ap-south-1.amazonaws.com/Personal/PresignedUrlPutTest.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256
+X-Amz-Content-Sha256=UNSIGNED-PAYLOAD
+X-Amz-Credential=ASIA343VWCI4XEZL6VET/20251214/ap-south-1/s3/aws4_request
+X-Amz-Date=20251214T100954Z
+X-Amz-Expires=30
+X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGYaCXVzLWVhc3QtMSJHMEUCIQDzyWGsHUZ7hyGLRYYTo2AVg9DpvglxPW/PERcvt4T5WgIgEK3LJ40mYlRuzc20Wo6TUqkldmL/Cw5xQld41tNYnZIqkwMILxAAGgw4MTc5MDEyMTIyMTciDHmHcg6l+58LgrQqrSrwAmAhICPxeWvNkcV3yyCJNFOh3mlswv34vMhY8Y2+xEiAq2VQ/muRkEtIQ3xYEmCjjbg12f2SyjCmO3j8yCr45ZyhdQj/UEq8tC7O1g+jiRODTScanYNv9ycy8RFLAAV2ynPTwU6/AVK3NvQWRjgcr+/Z6sIDhJFo/mG+R7BNRgs0OPF3W/vO2Tgxa7UiBelQnwz6ZLcYhhUzHxxIE76wOY8T3XE8EKuEX+ykN3AJDadrqO75SBgw2GJX8thVBUTIkcNUN5GzPGJhrQPqQ6d6jmWwKgMqBE5DdGp0Ss8WXuJJZKJe0DnQnlADyqKPruY1n7CmBkPQYMPXui7Qe8A6EsljWFjGnwDABE4DS3WHfqsOuthhyn7amhyB8/RVdKnUrUkzXN+HzfmYIEGQj/SHe03/Q8U/ZInFMWmMBifPIrhmnnpQOe1RP/Xdyfz3YrGimcf7iJAnNzeUnO+Q62K7Dg9ll5y7GYZIh2wRIZvd05wpMLyg+ckGOqQBJPuTIz6sYvLwAc0pyhc3tQyUuFv5BVbebqURr29VbBUdBvm8Db7gGxEG5dNY4EXGRGY9fAipfgNz1YkS84sb0Uxp0qBHO9BfGLfFU8lwq0+aKihLCPaQbg5UeDQioMkLpkw8iMoE5a40fdT09JbcKNQryglgsF8ioOHVci4WjBukyGJfl1Yd7ZFAydJOlKCwg6xzgMFZlXErKskHx/EkQLnI3TI=
+X-Amz-Signature=8d572b5499c1f956fddd62b47de735369bff6517d9272ce63be59d25ae331e62
+X-Amz-SignedHeaders=host
+x-amz-checksum-mode=ENABLED
+x-id=GetObject */
+
+/* https://practise-s3bucket-souvik.s3.ap-south-1.amazonaws.com/Personal/JSTS.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256
+X-Amz-Content-Sha256=UNSIGNED-PAYLOAD
+X-Amz-Credential=ASIA343VWCI4XEZL6VET/20251214/ap-south-1/s3/aws4_request
+X-Amz-Date=20251214T100651Z
+X-Amz-Expires=30
+X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGYaCXVzLWVhc3QtMSJHMEUCIQDzyWGsHUZ7hyGLRYYTo2AVg9DpvglxPW/PERcvt4T5WgIgEK3LJ40mYlRuzc20Wo6TUqkldmL/Cw5xQld41tNYnZIqkwMILxAAGgw4MTc5MDEyMTIyMTciDHmHcg6l+58LgrQqrSrwAmAhICPxeWvNkcV3yyCJNFOh3mlswv34vMhY8Y2+xEiAq2VQ/muRkEtIQ3xYEmCjjbg12f2SyjCmO3j8yCr45ZyhdQj/UEq8tC7O1g+jiRODTScanYNv9ycy8RFLAAV2ynPTwU6/AVK3NvQWRjgcr+/Z6sIDhJFo/mG+R7BNRgs0OPF3W/vO2Tgxa7UiBelQnwz6ZLcYhhUzHxxIE76wOY8T3XE8EKuEX+ykN3AJDadrqO75SBgw2GJX8thVBUTIkcNUN5GzPGJhrQPqQ6d6jmWwKgMqBE5DdGp0Ss8WXuJJZKJe0DnQnlADyqKPruY1n7CmBkPQYMPXui7Qe8A6EsljWFjGnwDABE4DS3WHfqsOuthhyn7amhyB8/RVdKnUrUkzXN+HzfmYIEGQj/SHe03/Q8U/ZInFMWmMBifPIrhmnnpQOe1RP/Xdyfz3YrGimcf7iJAnNzeUnO+Q62K7Dg9ll5y7GYZIh2wRIZvd05wpMLyg+ckGOqQBJPuTIz6sYvLwAc0pyhc3tQyUuFv5BVbebqURr29VbBUdBvm8Db7gGxEG5dNY4EXGRGY9fAipfgNz1YkS84sb0Uxp0qBHO9BfGLfFU8lwq0+aKihLCPaQbg5UeDQioMkLpkw8iMoE5a40fdT09JbcKNQryglgsF8ioOHVci4WjBukyGJfl1Yd7ZFAydJOlKCwg6xzgMFZlXErKskHx/EkQLnI3TI=
+X-Amz-Signature=ba41b906e4eefafa7424e28b90b3d48a438a4b0ed23d6d39d0f18e12719a4e26
+X-Amz-SignedHeaders=host
+x-amz-checksum-mode=ENABLED
+x-id=GetObject */
+
+/* https://practise-s3bucket-souvik.s3.ap-south-1.amazonaws.com/Personal/PresignedUrlPutTest.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256
+X-Amz-Content-Sha256=UNSIGNED-PAYLOAD
+X-Amz-Credential=ASIA343VWCI4XEZL6VET/20251214/ap-south-1/s3/aws4_request
+X-Amz-Date=20251214T100135Z
+X-Amz-Expires=3600
+X-Amz-Security-Token=IQoJb3JpZ2luX2VjEGYaCXVzLWVhc3QtMSJHMEUCIQDzyWGsHUZ7hyGLRYYTo2AVg9DpvglxPW/PERcvt4T5WgIgEK3LJ40mYlRuzc20Wo6TUqkldmL/Cw5xQld41tNYnZIqkwMILxAAGgw4MTc5MDEyMTIyMTciDHmHcg6l+58LgrQqrSrwAmAhICPxeWvNkcV3yyCJNFOh3mlswv34vMhY8Y2+xEiAq2VQ/muRkEtIQ3xYEmCjjbg12f2SyjCmO3j8yCr45ZyhdQj/UEq8tC7O1g+jiRODTScanYNv9ycy8RFLAAV2ynPTwU6/AVK3NvQWRjgcr+/Z6sIDhJFo/mG+R7BNRgs0OPF3W/vO2Tgxa7UiBelQnwz6ZLcYhhUzHxxIE76wOY8T3XE8EKuEX+ykN3AJDadrqO75SBgw2GJX8thVBUTIkcNUN5GzPGJhrQPqQ6d6jmWwKgMqBE5DdGp0Ss8WXuJJZKJe0DnQnlADyqKPruY1n7CmBkPQYMPXui7Qe8A6EsljWFjGnwDABE4DS3WHfqsOuthhyn7amhyB8/RVdKnUrUkzXN+HzfmYIEGQj/SHe03/Q8U/ZInFMWmMBifPIrhmnnpQOe1RP/Xdyfz3YrGimcf7iJAnNzeUnO+Q62K7Dg9ll5y7GYZIh2wRIZvd05wpMLyg+ckGOqQBJPuTIz6sYvLwAc0pyhc3tQyUuFv5BVbebqURr29VbBUdBvm8Db7gGxEG5dNY4EXGRGY9fAipfgNz1YkS84sb0Uxp0qBHO9BfGLfFU8lwq0+aKihLCPaQbg5UeDQioMkLpkw8iMoE5a40fdT09JbcKNQryglgsF8ioOHVci4WjBukyGJfl1Yd7ZFAydJOlKCwg6xzgMFZlXErKskHx/EkQLnI3TI=
+X-Amz-Signature=6d09515729b231c6ccd9fc234fa5fb2928c367858f34b0c7b987b18a184be134
+X-Amz-SignedHeaders=host
+x-amz-checksum-crc32=AAAAAA==
+x-amz-sdk-checksum-algorithm=CRC32
+x-id=PutObject */
