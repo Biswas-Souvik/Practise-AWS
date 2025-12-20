@@ -49,10 +49,18 @@
           if (!response.ok) {
             throw new Error('City not found');
           }
-          console.log('resp: ', response);
+
           const data = await response.json();
 
-          resultDiv.innerHTML = data;
+          const output = `
+            <h3>Weather in ${data.location}</h3>
+            <p>Temperature: ${data.temperature} °C</p>
+            <p>Weather: ${data.condition}</p>
+            <p>Humidity: ${data.humidity}%</p>
+            <p>Wind Speed: ${data.wind}</p>
+          `;
+
+          resultDiv.innerHTML = output;
         } catch (error) {
           console.log('err: ', error);
           resultDiv.innerHTML = error;
