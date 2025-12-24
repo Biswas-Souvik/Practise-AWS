@@ -4,7 +4,7 @@ import {
   getPresignedUrl,
   getPresignedUrlPut,
   getS3Object,
-} from './s3_operations.ts';
+} from './s3.utils.ts';
 
 const output = await getPresignedUrlPut(
   'practise-s3bucket-souvik',

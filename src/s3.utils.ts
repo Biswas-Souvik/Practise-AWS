@@ -19,9 +19,8 @@ export const listS3Objects = async (bucketName: string, pageSize: number) => {
       { client, pageSize },
       { Bucket: bucketName }
     );
-
+    console.log(`Objects in S3 bucket "${bucketName}": `, '\n', paginator);
     for await (const page of paginator) {
-      console.log('Page:', page);
       if (page.Contents) objects.push(page.Contents.map((o) => o.Key));
     }
     objects.forEach((objectList, pageNum) => {
@@ -31,6 +30,7 @@ export const listS3Objects = async (bucketName: string, pageSize: number) => {
           .join('\n')}\n`
       );
     });
+    return objects;
   } catch (caught) {
     if (
       caught instanceof S3ServiceException &&
@@ -62,7 +62,7 @@ export const getS3Object = async (bucketName: string, key: string) => {
     if (!response)
       throw new Error(`The object "${key}" from "${bucketName}" is empty.`);
     // const str = await response;
-    console.log(await response.Body?.transformToString);
+    return await response.Body?.transformToString();
   } catch (caught) {
     if (caught instanceof NoSuchKey) {
       console.error(
